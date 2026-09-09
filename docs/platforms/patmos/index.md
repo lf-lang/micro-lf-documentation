@@ -1,82 +1,75 @@
 # Patmos
 
-- **Template**: [lf-patmos-template](https://github.com/lf-lang/lf-patmos-template)
-- **Patmos Project**: [patmos-project](https://github.com/t-crest/patmos)
+- **Git:** <https://github.com/t-crest/patmos>
+- **Documentation:** <https://github.com/t-crest/patmos/wiki>
+- **micro-LF Docs:** <https://micro-lf.org>
 
-Patmos is a time-predictable processor designed for hard real-time systems and WCET (Worst-Case Execution Time) analysis. The uLF runtime supports single-threaded static scheduling on Patmos.
+______
 
-## Prerequisites
+This is a template for micro-LF applications targeting the [Patmos](https://github.com/t-crest/patmos) processor. It is designed to be cloned as a sibling folder alongside reactor-uc.
 
-- Patmos toolchain (patmos-clang compiler)
-- Pasim simulator
-- Platin WCET analysis tool
+## 1. Prerequisites
 
-## Setup
+### 1.1. Basic
 
-Clone the required repositories:
+You must use one of the following operating systems:
+
+- `Linux` — Officially supported are Debian & Ubuntu
+- `macOS`
+
+Your system must have the following software packages (you likely have at least some of these already):
+
+- `git` — [a distributed version control system](https://git-scm.com/)
+- `java` — [Java 17](https://openjdk.org/projects/jdk/17)
+
+Install Patmos by following the instructions at <https://github.com/t-crest/patmos>.
+
+### 1.2. micro-LF
+
+This template is for running micro-LF applications on the Patmos processor. It uses [reactor-uc](https://github.com/lf-lang/reactor-uc), the runtime that facilitates the execution.
+
+## 2. Choose a Directory
+
+You can either use an existing directory, create a new one, or use the `~` (home) directory to store the files. Then navigate to it.
+
+## 3. Clone reactor-uc
+
+Clone reactor-uc and set `REACTOR_UC_PATH`:
+
+#### Clone via HTTPS
 
 ```bash
-# Clone the Patmos template
-git clone https://github.com/lf-lang/lf-patmos-template.git
+git clone https://github.com/lf-lang/reactor-uc.git --recursive
+cd reactor-uc
+export REACTOR_UC_PATH=$(pwd)
+```
 
-# Clone Lingua Franca and checkout the static schedule branch
-git clone https://github.com/lf-lang/lingua-franca.git
-cd lingua-franca
-git checkout static-schedule-single-thread
-git submodule update --init core/src/main/resources/lib/c/reactor-c
+#### Or Clone via SSH
+
+```bash
+git clone git@github.com:lf-lang/reactor-uc.git --recursive
+cd reactor-uc
+export REACTOR_UC_PATH=$(pwd)
+```
+
+## 4. Clone this Repository
+
+Clone this template repository as a sibling folder to reactor-uc:
+
+```shell
 cd ..
+git clone --depth=1 https://github.com/lf-lang/ulf-patmos-template.git ulf-patmos-template
+cd ulf-patmos-template
 ```
 
-Copy support files:
+## 5. Build
 
 ```bash
-cp -r lf-patmos-template/patmos lingua-franca/test/C/src/static/patmos
-cp lf-patmos-template/Makefile lingua-franca/test/C/Makefile
-cp lf-patmos-template/ADASModel.lf lingua-franca/test/C/src/static/ADASModel.lf
-cp lf-patmos-template/SimpleConnection.lf lingua-franca/test/C/src/static/SimpleConnection.lf
+make all
 ```
 
-## Building and Running
-
-Navigate to the test directory:
+To build a different micro-LF application, set the `LF_MAIN` variable:
 
 ```bash
-cd lingua-franca/test/C
+make LF_MAIN=Smoke all
 ```
-
-Build and simulate:
-
-```bash
-make APP=SingleConnection
-```
-
-This will:
-
-1. Generate C code using `lfc`
-2. Compile with the Patmos compiler
-3. Simulate with Pasim
-4. Analyze with Platin
-
-## WCET Analysis
-
-Analyze a specific function:
-
-```bash
-make APP=SingleConnection FUNC=_sinkreaction_function_0 wcet
-```
-
-## Make Targets
-
-| Target | Description |
-|--------|-------------|
-| `gen` | Generate C code using lfc |
-| `copy` | Copy support files to src-gen |
-| `comp` | Compile with Patmos compiler |
-| `sim` | Simulate with Pasim |
-| `wcet` | Analyze WCET with Platin |
-| `clean` | Delete compiled files |
-| `del` | Delete all generated code |
-
-## Static Scheduling
-
-Patmos uses the uLF runtime's **static scheduler** for predictable execution timing. The schedule is computed at compile time, enabling precise WCET analysis.

@@ -20,7 +20,7 @@ To start a new project:
 | [Pico](pico/index.md) | [ulf-pico-template](https://github.com/lf-lang/ulf-pico-template) | CMake |
 | [FreeRTOS](freertos/index.md) | [ulf-freertos-template](https://github.com/lf-lang/ulf-freertos-template) | CMake |
 | [ESP-IDF](esp-idf/index.md) | [ulf-esp-idf-template](https://github.com/lf-lang/ulf-esp-idf-template) | CMake + ESP-IDF |
-| [Patmos](patmos/index.md) | [lf-patmos-template](https://github.com/lf-lang/lf-patmos-template) | Make |
+| [Patmos](patmos/index.md) | [ulf-patmos-template](https://github.com/lf-lang/ulf-patmos-template) | Make |
 
 ## Common Prerequisites
 
