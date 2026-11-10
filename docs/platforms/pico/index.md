@@ -7,9 +7,11 @@
 
 ## Prerequisites
 
-Install the ARM toolchain: [Install ARM Cross-Compiler](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-cmake-standard-c-library-arm-cross-compiler)
+In addition to the [common prerequisites](../index.md#common-prerequisites):
 
-Install picotool: [Install Picotool](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-picotool)
+- **CMake 3.20+**
+- **ARM cross-compiler**: [Install ARM Cross-Compiler](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-cmake-standard-c-library-arm-cross-compiler)
+- **picotool**: [Install Picotool](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-picotool)
 
 ## Setup
 
