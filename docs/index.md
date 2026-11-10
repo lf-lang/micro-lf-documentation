@@ -60,6 +60,13 @@
 
     [:octicons-arrow-right-24: FreeRTOS](platforms/freertos/index.md)
 
+-   ![Espressif](assets/logos/espressif.svg#only-light){: style="height:48px"}
+    ![Espressif](assets/logos/espressif_white.svg#only-dark){: style="height:48px"}
+
+    ---
+
+    [:octicons-arrow-right-24: ESP-IDF (ESP32)](platforms/esp-idf/index.md)
+
 -   :fontawesome-brands-linux:{ style="font-size: 48px" }
 
     ---
@@ -94,8 +101,6 @@
 A simple blinky reactor that toggles an LED every 500ms:
 
 ```lf
-target uC
-
 main reactor {
   timer t(0, 500 ms)
   state led_on: bool = false

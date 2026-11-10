@@ -193,7 +193,7 @@ This is a monolithic block — not composable, duplicated across federates, and 
 
 ```lf
 // Runtime behaviour
-@timeout(SEC(5))
+@timeout(5s)
 @fast(true)
 @keepalive(true)
 @logging("DEBUG")

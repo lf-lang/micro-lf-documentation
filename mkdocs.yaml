@@ -2,7 +2,7 @@ site_name: micro-LF
 site_url: https://micro-lf.org
 repo_url: https://github.com/lf-lang/reactor-uc
 repo_name: lf-lang/reactor-uc
-edit_uri: edit/main/docs/docs/
+edit_uri: https://github.com/lf-lang/micro-lf-documentation/edit/main/docs/
 
 docs_dir: docs
 
@@ -103,7 +103,7 @@ extra:
       link: https://github.com/lf-lang/reactor-uc
 
 copyright: >
-  Copyright &copy; 2024 - 2025 micro-LF Contributors
+  Copyright &copy; 2024 - 2026 micro-LF Contributors.
 
 plugins:
   - privacy

@@ -31,7 +31,7 @@ export REACTOR_UC_PATH=$(pwd)/reactor-uc
 
 ### 2. Clone a template repository
 
-Choose a template for your target platform (except "Native", which does not need a template repo):
+Choose a template for your target platform. For example "native" [ulf-posix-template](https://github.com/lf-lang/ulf-posix-template).
 
 <div class="grid cards" markdown>
 
@@ -67,9 +67,12 @@ Choose a template for your target platform (except "Native", which does not need
 
     [:octicons-arrow-right-24: ulf-freertos-template](https://github.com/lf-lang/ulf-freertos-template)
 
--   **ESP-IDF** · CMake
+-   ![Espressif](../assets/logos/espressif.svg#only-light){: style="height:48px"}
+    ![Espressif](../assets/logos/espressif_white.svg#only-dark){: style="height:48px"}
 
     ---
+
+    **ESP-IDF (ESP32)** · CMake
 
     [:octicons-arrow-right-24: ulf-esp-idf-template](https://github.com/lf-lang/ulf-esp-idf-template)
 
@@ -109,6 +112,14 @@ Choose a template for your target platform (except "Native", which does not need
     git submodule update --init --recursive
     ```
 
+=== "FreeRTOS"
+
+    ```bash
+    git clone https://github.com/lf-lang/ulf-freertos-template.git my-project
+    cd my-project
+    git submodule update --init --recursive
+    ```
+
 === "ESP-IDF"
 
     ```bash
@@ -126,6 +137,9 @@ Choose a template for your target platform (except "Native", which does not need
     ulfc src/MyProgram.lf
     bin/MyProgram
     ```
+
+    `MyProgram.ulf` must declare `@platform("Native")` on its main reactor for
+    `ulfc` to compile an executable (see [POSIX](../platforms/posix/index.md)).
     
 === "Zephyr"
 
@@ -152,6 +166,14 @@ Choose a template for your target platform (except "Native", which does not need
     picotool load -x build/Blink.elf
     ```
 
+=== "FreeRTOS"
+
+    ```bash
+    cmake -Bbuild -DPLATFORM_TARGET=pico
+    cmake --build build
+    picotool load -x build/HelloFreeRTOS.elf
+    ```
+
 === "ESP-IDF"
 
     ```bash
@@ -167,8 +189,6 @@ Choose a template for your target platform (except "Native", which does not need
 Each template includes example applications. Here's a simple Blinky reactor:
 
 ```lf
-target uC
-
 main reactor {
   timer t(0, 500 ms)
   state led_on: bool = false
@@ -205,10 +225,26 @@ To build a different application, set the `LF_MAIN` variable:
     make LF_MAIN=MyApp all
     ```
 
-=== "Pico / ESP-IDF"
+=== "Pico"
 
     ```bash
     cmake -Bbuild -DLF_MAIN=MyApp
+    cmake --build build
+    ```
+
+=== "FreeRTOS"
+
+    ```bash
+    cmake -Bbuild -DPLATFORM_TARGET=pico -DLF_MAIN=MyApp
+    cmake --build build
+    ```
+
+=== "ESP-IDF"
+
+    ```bash
+    cmake -Bbuild -DLF_MAIN=MyApp -DESP_IDF_BOARD=esp32 \
+          -DCMAKE_TOOLCHAIN_FILE=$IDF_PATH/tools/cmake/toolchain-esp32.cmake \
+          -GNinja
     cmake --build build
     ```
 

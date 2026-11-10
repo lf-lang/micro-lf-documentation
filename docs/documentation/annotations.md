@@ -36,7 +36,7 @@ Specifies a global timeout for reactor execution. The program will shutdown afte
 
 **Parameters:**
 
-- `<time_value>`: Logical time duration in appropriate time unit (e.g., `MSEC(5000)`, `SEC(5)`)
+- `<time_value>`: Logical time duration as an LF time literal (e.g., `500ms`, `5s`, `10 sec`)
 
 **`@fast(<boolean>)`**{ .api-sig }
 

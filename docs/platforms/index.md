@@ -21,6 +21,7 @@ To start a new project:
 | [FreeRTOS](freertos/index.md) | [ulf-freertos-template](https://github.com/lf-lang/ulf-freertos-template) | CMake |
 | [ESP-IDF](esp-idf/index.md) | [ulf-esp-idf-template](https://github.com/lf-lang/ulf-esp-idf-template) | CMake + ESP-IDF |
 | [Patmos](patmos/index.md) | [lf-patmos-template](https://github.com/lf-lang/lf-patmos-template) | Make |
+| [POSIX](posix/index.md) | [ulf-posix-template](https://github.com/lf-lang/ulf-posix-template) (optional) | CMake |
 
 ## Common Prerequisites
 
