@@ -7,7 +7,7 @@ This guide walks you through setting up your first micro-LF project.
 The code generator requires:
 
 - **Git** - [git-scm.com](https://git-scm.com/)
-- **Java 17** - [openjdk.org](https://openjdk.org/projects/jdk/17/) (for the Lingua Franca compiler)
+- **Java 17** - [openjdk.org](https://openjdk.org/projects/jdk/17/) (for the micro-LF compiler)
 
 Platform-specific tools:
 
@@ -23,6 +23,9 @@ Platform-specific tools:
 ## Quick Start
 
 ### 1. Clone micro-LF
+
+The micro-LF compiler (`ulfc`) and runtime live in the reactor-uc repository.
+There is no separate installer: clone the repository and set `REACTOR_UC_PATH` to the root of the repository.
 
 ```bash
 git clone https://github.com/lf-lang/reactor-uc.git --recurse-submodules
@@ -134,7 +137,7 @@ Choose a template for your target platform. For example "native" [ulf-posix-temp
 === "Native"
 
     ```bash
-    ulfc src/MyProgram.lf
+    ulfc src/MyProgram.ulf
     bin/MyProgram
     ```
 

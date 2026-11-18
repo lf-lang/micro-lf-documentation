@@ -29,10 +29,12 @@ All platforms require:
 
 - **Linux** or **macOS** (some support Windows via WSL)
 - **Git** for version control
-- **Java 17** for the Lingua Franca compiler
+- **Java 17** for the micro-LF compiler (`ulfc`)
 - **micro-LF** cloned with `REACTOR_UC_PATH` environment variable set
 
 ```bash
 git clone https://github.com/lf-lang/reactor-uc.git --recurse-submodules
 export REACTOR_UC_PATH=/path/to/reactor-uc
 ```
+
+See [Getting Started](../getting-started/index.md#1-clone-micro-lf) for details.

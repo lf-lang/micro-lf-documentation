@@ -198,15 +198,12 @@ reactor RedundantNode(my_id: int = 0, left: int = 1, right: int = 2,
 
 ## Federation Configuration
 
-`FlightControllerReal.lf` instantiates three `RedundantNode` federates and wires them over UART. Each federate is configured entirely through annotations — there is no `target { }` property block.
+`FlightControllerReal.ulf` instantiates three `RedundantNode` federates and wires them over UART. Each federate is configured entirely through annotations — there is no `target { }` property block.
 
 ```lf
-target uC {
-    platform: rp2040,
-    logging: INFO,
-    clock-sync: on
-}
-
+@platform("PICO")
+@logging("INFO")
+@clock_sync("on")
 federated reactor {
     // Node 0 — grandmaster clock, uses uart1 for its right neighbor
     @interface_uart(name="uart1", uart_device=1, baud_rate=57600,
@@ -254,8 +251,8 @@ Notable uLF runtime features in use:
 Clone the repository and build each federate separately:
 
 ```bash
-git clone https://github.com/tanneberger/fsw25.git
-cd fsw25
+git clone --recurse-submodules https://github.com/tanneberger/fault-tolerance-testing.git
+cd fault-tolerance-testing
 ```
 
 Flash node 0:
@@ -263,15 +260,15 @@ Flash node 0:
 ```bash
 cmake -Bbuild . -DLF_MAIN=FlightControllerReal -DFEDERATE=node_0
 cmake --build build
-sudo picotool load -x build/LF_MAIN.elf
+sudo picotool load -x build/FlightControllerReal_node_0.elf
 ```
 
-Flash node 1 (repeat with `DFEDERATE=node_1` on a second Pico):
+Flash node 1 (repeat with `-DFEDERATE=node_1` on a second Pico):
 
 ```bash
 cmake -Bbuild . -DLF_MAIN=FlightControllerReal -DFEDERATE=node_1
 cmake --build build
-sudo picotool load -x build/LF_MAIN.elf
+sudo picotool load -x build/FlightControllerReal_node_1.elf
 ```
 
 Run the sensor self-test on a single board:
@@ -279,9 +276,9 @@ Run the sensor self-test on a single board:
 ```bash
 cmake -Bbuild . -DLF_MAIN=SensorTest
 cmake --build build
-sudo picotool load -x build/LF_MAIN.elf
+sudo picotool load -x build/SensorTest.elf
 ```
 
 ## Repository
 
-[:octicons-mark-github-16: tanneberger/fsw25](https://github.com/tanneberger/fsw25)
+[:octicons-mark-github-16: tanneberger/fault-tolerance-testing](https://github.com/tanneberger/fault-tolerance-testing)
