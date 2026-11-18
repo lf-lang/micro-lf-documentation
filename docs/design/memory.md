@@ -24,7 +24,7 @@ Trigger* triggers[MAX_TRIGGERS];
 Event event_buffer[MAX_PENDING_EVENTS];
 ```
 
-The Lingua Franca compiler analyzes the program structure and generates appropriately sized allocations:
+The micro-LF compiler (`ulfc`) analyzes the program structure and generates appropriately sized allocations:
 
 ```mermaid
 graph LR

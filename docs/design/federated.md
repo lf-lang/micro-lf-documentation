@@ -37,9 +37,10 @@ Network channels abstract the underlying transport:
 ```c
 typedef enum {
   NETWORK_CHANNEL_TYPE_TCP_IP,
+  NETWORK_CHANNEL_TYPE_COAP_UDP_IP,
   NETWORK_CHANNEL_TYPE_UART,
-  NETWORK_CHANNEL_TYPE_COAP_UDP,
-  // ... platform-specific
+  NETWORK_CHANNEL_TYPE_S4NOC,
+  NETWORK_CHANNEL_TYPE_BLE,
 } NetworkChannelType;
 
 struct NetworkChannel {
@@ -57,8 +58,10 @@ struct NetworkChannel {
 | Transport | Platforms | Use Case |
 |-----------|-----------|----------|
 | TCP/IP | POSIX, Zephyr, RIOT | Ethernet, WiFi |
-| UART | RIOT, Pico | Point-to-point serial |
+| UART | RIOT, Pico, Zephyr | Point-to-point serial |
 | CoAP/UDP | RIOT | IoT networks |
+| BLE | Zephyr | Bluetooth Low Energy between two boards |
+| S4NoC | Patmos | Network-on-chip |
 | Custom | Any | Specialized hardware |
 
 ### Channel Modes
@@ -453,6 +456,7 @@ Available interface types:
 | `@interface_uart` | Serial communication |
 | `@interface_coap` | CoAP/UDP for IoT networks |
 | `@interface_s4noc` | Network-on-chip for Patmos |
+| `@interface_ble` | Bluetooth Low Energy (Zephyr) |
 | `@interface_custom` | User-defined protocols |
 
 ### @link Annotation
