@@ -8,7 +8,9 @@ docs_dir: docs
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started/index.md
+  - Getting Started:
+    - getting-started/index.md
+    - Windows (WSL): getting-started/wsl.md
   - Philosophy:
     - design/index.md
     - The Reactor Model: design/reactor-model.md
@@ -18,7 +20,7 @@ nav:
     - Platform Abstraction: design/platform.md
     - Code Generation: design/building.md
     - Federated Execution: design/federated.md
-    - uLF vs reactor-c: design/reactor-c-comparison.md
+    - micro-LF vs reactor-c: design/reactor-c-comparison.md
   - Documentation:
     - Annotations: documentation/annotations.md
     - Reaction API: documentation/reaction_api.md
