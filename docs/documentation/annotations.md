@@ -28,7 +28,10 @@ Sets the logging verbosity level for the runtime system.
 - `"ERROR"`: Only log errors
 - `"WARN"`: Log warnings and errors
 - `"INFO"`: Log general information
+- `"LOG"`: Log general information and additional messages
 - `"DEBUG"`: Log detailed debug information
+
+Values are not case-sensitive.
 
 **`@timeout(<time_value>)`**{ .api-sig }
 
@@ -36,7 +39,7 @@ Specifies a global timeout for reactor execution. The program will shutdown afte
 
 **Parameters:**
 
-- `<time_value>`: Logical time duration in appropriate time unit (e.g., `MSEC(5000)`, `SEC(5)`)
+- `<time_value>`: Logical time duration as an LF time literal (e.g., `500ms`, `5s`, `10 sec`)
 
 **`@fast(<boolean>)`**{ .api-sig }
 
@@ -56,12 +59,14 @@ Controls whether the reactor keeps running when there are no more scheduled even
 
 **`@clock_sync("<mode>")`**{ .api-sig }
 
-Globally enables or disables clock synchronization across a federation.
+Globally enables or disables clock synchronization across a federation. Place it on the `federated reactor`. Clock synchronization is on by default.
 
 **Valid values:**
 
-- `"on"`: Enable clock synchronization
-- `"off"`: Disable clock synchronization
+- `"on"`: Enable clock synchronization (default)
+- `"off"`: Disable clock synchronization for all federates
+
+To configure or disable it for a single federate, use the per-federate [`@clock_sync(...)`](#clock-synchronization) annotation.
 
 ## Reactor Components
 
@@ -94,7 +99,7 @@ Generic platform annotation for specifying target platforms:
 **Valid platforms:**
 
 - `"NATIVE"`: Native (POSIX: Linux or macOS) platform
-- `"PICO"`: Raspberry Pi Pico
+- `"PICO"` (or the legacy `"RP2040"`): Raspberry Pi Pico
 - `"ZEPHYR"`: Zephyr RTOS
 - `"RIOT"`: RIOT OS
 - `"FLEXPRET"`: FlexPRET
@@ -125,19 +130,19 @@ TCP/IP network interface for federate communication.
 - `name`: Interface identifier
 - `address`: Host and port (format: "host:port")
 
-**`@interface_uart(name="uart0", uart_device=0, baud_rate=115200, data_bits=8, parity="", stop_bits=1, async=false)`**{ .api-sig }
+**`@interface_uart(name="uart0", uart_device=0, baud_rate=115200, data_bits=8, parity="even", stop_bits=1, async=false)`**{ .api-sig }
 
-UART/serial interface for embedded systems communication.
+UART/serial interface for embedded systems communication. All parameters are optional.
 
 **Parameters:**
 
 - `name`: Interface identifier
-- `uart_device`: Device number
-- `baud_rate`: Communication speed (e.g., 115200)
-- `data_bits`: Bits per character (typically 8)
-- `parity`: Parity mode (e.g., "", "even", "odd")
-- `stop_bits`: Stop bits (typically 1 or 2)
-- `async`: Whether to use asynchronous mode
+- `uart_device`: Device number (default: `0`)
+- `baud_rate`: Communication speed (default: `9600`)
+- `data_bits`: Bits per character (default: `8`)
+- `parity`: Parity mode: `"none"` (default), `"even"`, `"odd"`, `"mark"` or `"space"`
+- `stop_bits`: Stop bits (default: `1`)
+- `async`: Use the interrupt-driven channel instead of the polled one (default: `false`). Only RIOT provides an asynchronous UART channel.
 
 **`@interface_coap(name="coap0", address="10.0.0.1")`**{ .api-sig }
 
@@ -155,6 +160,15 @@ S4NoC network-on-chip interface for tightly-coupled embedded systems.
 **Parameters:**
 
 - `core`: Core identifier
+
+**`@interface_ble(name="ble0", device_name="sensor-node")`**{ .api-sig }
+
+Bluetooth Low Energy interface (Zephyr only). Each BLE link connects exactly two boards: the server side of the [`@link`](#network-configuration) becomes the BLE *peripheral*, which advertises under `device_name`. The other side becomes the *central*, which scans for that name and connects. Link-layer timing is configured on the `@link` annotation.
+
+**Parameters:**
+
+- `name`: Interface identifier
+- `device_name`: Name the board advertises when it is the peripheral (default: `"reactor-uc-ble"`). Only needed on the peripheral (a board can be the peripheral of at most one link).
 
 **`@interface_custom(name="c1", args="blabla", include="my_network.h")`**{ .api-sig }
 
@@ -182,8 +196,11 @@ Multiple LF connections can share the same network channel by using the same `@l
 
 - `left`: Name of the interface on the sending (upstream) federate
 - `right`: Name of the interface on the receiving (downstream) federate
-- `server_side` (optional): Which side acts as server (`"left"` or `"right"`)
+- `server_side` (optional): Which side acts as server (`"left"` or `"right"`). For BLE, the server side is the peripheral.
 - `server_port` (optional): Port number for the server
+- `interval` (optional, BLE only): Connection interval, a multiple of 1.25 ms between 7.5 ms and 4 s (default: `30ms`)
+- `latency` (optional, BLE only): Number of connection events the peripheral may skip, 0–499 (default: `0`)
+- `timeout` (optional, BLE only): Supervision timeout, a multiple of 10 ms between 100 ms and 32 s (default: `2s`)
 
 **Example:**
 ```lf
@@ -238,8 +255,10 @@ Controls how federates synchronize when joining a federation.
 
 **Policies:**
 
-- `"TIMER_ALIGNED"`: Synchronize to a common time reference
-- `"IMMEDIATELY"`: Begin execution immediately
+- `"JOIN_IMMEDIATELY"`: Begin execution immediately (default)
+- `"JOIN_TIMER_ALIGNED"`: Synchronize to a common time reference
+
+Values are case-sensitive.
 
 ## Clock Synchronization
 
@@ -247,15 +266,16 @@ Configure distributed clock synchronization across federated systems.
 
 **`@clock_sync(grandmaster=true, period=3500000000, max_adj=512000, kp=0.5, ki=0.1)`**{ .api-sig }
 
-Enable and configure clock synchronization using a PTP-like protocol for precise time alignment across federates.
+Enable and configure clock synchronization using a PTP-like protocol for precise time alignment across federates. Place it on a federate instance. All parameters are optional.
 
 **Parameters:**
 
-- `grandmaster`: Whether this federate is the time reference (true/false)
-- `period`: Synchronization period in nanoseconds
-- `max_adj`: Maximum clock adjustment per sync cycle (nanoseconds)
-- `kp`: Proportional controller gain
-- `ki`: Integral controller gain
+- `grandmaster`: Whether this federate is the time reference (default: `false`)
+- `period`: Synchronization period in nanoseconds (default: `1000000000`, i.e. 1 s)
+- `max_adj`: Maximum clock adjustment per sync cycle in nanoseconds (default: `200000000`)
+- `kp`: Proportional controller gain (default: `0.7`)
+- `ki`: Integral controller gain (default: `0.3`)
+- `disabled`: Disable clock synchronization for this federate (default: `false`)
 
 ## Legacy Annotations (Not Supported)
 

@@ -1,19 +1,24 @@
 # Raspberry Pi Pico
 
 - **Template**: [ulf-pico-template](https://github.com/lf-lang/ulf-pico-template)
-- **Pico SDK**: [github.com/raspberrypi/pico-sdk](https://github.com/raspberrypi/pico-sdk/)
-- **Documentation**: [raspberrypi.com/documentation/pico-sdk](https://www.raspberrypi.com/documentation/pico-sdk/)
+- **Pico SDK Documentation**: [raspberrypi.com/documentation/pico-sdk](https://www.raspberrypi.com/documentation/pico-sdk/)
 - **Supported Boards**: [Pico Series](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html)
+
+The Pico template builds micro-LF applications bare-metal with the [Pico SDK](https://github.com/raspberrypi/pico-sdk/), for RP2040 and RP2350 boards such as the Pico, Pico W, and Pico 2.
 
 ## Prerequisites
 
-Install the ARM toolchain: [Install ARM Cross-Compiler](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-cmake-standard-c-library-arm-cross-compiler)
+In addition to the [common prerequisites](../index.md#common-prerequisites):
 
-Install picotool: [Install Picotool](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-picotool)
+- **CMake 3.20+**
+- **ARM cross-compiler**: [Install ARM Cross-Compiler](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-cmake-standard-c-library-arm-cross-compiler)
+- **picotool**: [Install Picotool](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-picotool)
+
+If you use [Nix](https://nixos.org), run `nix develop` in the project directory to get these tools instead.
 
 ## Setup
 
-Clone and initialize submodules:
+Clone the template and initialize the Pico SDK submodule:
 
 ```bash
 git clone https://github.com/lf-lang/ulf-pico-template.git my-project
@@ -23,52 +28,38 @@ git submodule update --init --recursive
 
 ## Building
 
-Configure and build:
-
 ```bash
 cmake -Bbuild
-cmake --build build -j $(nproc)
+cmake --build build
 ```
 
-This creates `build/Blink.elf`.
+This builds the default application, `Blink`, into `build/Blink.elf`. For a board other than the Pico, set `PICO_BOARD` when configuring, e.g. `-DPICO_BOARD=pico2` (RP2350) or `-DPICO_BOARD=pico_w`.
 
 ## Flashing
 
-Put the Pico into BOOTSEL mode (hold BOOTSEL while connecting USB), then:
+Put the Pico into BOOTSEL mode (hold the BOOTSEL button while connecting USB), then:
 
 ```bash
 picotool load -x build/Blink.elf
 ```
 
+The program's output is sent over USB serial and over UART (GPIO 0 and 1). On Windows, first attach the board to WSL: see [Windows (WSL)](../../getting-started/wsl.md).
+
 ## Changing the Application
 
-Edit `LF_MAIN` in `CMakeLists.txt` or via command line:
+Set `LF_MAIN` in `CMakeLists.txt`, or on the command line:
 
 ```bash
 cmake -Bbuild -DLF_MAIN=Timer
-cmake --build build -j $(nproc)
+cmake --build build
 ```
 
 ## Log Level
 
+The default is `LF_LOG_LEVEL_WARN`:
+
 ```bash
 cmake -Bbuild -DLOG_LEVEL=LF_LOG_LEVEL_DEBUG
-```
-
-## Board Variants
-
-For Pico 2 (RP2350):
-
-```bash
-export PICO_BOARD=pico2
-cmake -Bbuild
-```
-
-For Pico W:
-
-```bash
-export PICO_BOARD=pico_w
-cmake -Bbuild
 ```
 
 ## Cleaning
@@ -79,7 +70,6 @@ rm -rf src-gen build
 
 ## Network Channels
 
-| Channel | Mode | Description |
-|---------|------|-------------|
-| UART | Polled | Serial point-to-point |
-
+| Channel | Description |
+|---------|-------------|
+| UART | Serial point-to-point link |

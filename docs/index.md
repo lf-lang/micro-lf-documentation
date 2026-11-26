@@ -16,13 +16,13 @@
 
     ---
 
-    No dynamic allocation at runtime. All memory is pre-allocated, making the uLF runtime suitable for safety-critical systems.
+    No dynamic allocation at runtime. All memory is pre-allocated, making the micro-LF runtime suitable for safety-critical systems.
 
 -   :material-chip:{ .lg .middle } **Multi-Platform**
 
     ---
 
-    Write once, run on Zephyr, RIOT, FreeRTOS, ESP-IDF, Raspberry Pi Pico, or bare metal with minimal changes.
+    Write once, run on Zephyr, RIOT, FreeRTOS, ESP-IDF, Raspberry Pi Pico, Patmos, or Linux/macOS with minimal changes.
 
 -   :material-lan:{ .lg .middle } **Federated Execution**
 
@@ -52,13 +52,26 @@
 
     ---
 
-    [:octicons-arrow-right-24: Pico](platforms/pico/index.md)
+    [:octicons-arrow-right-24: Raspberry Pi Pico](platforms/pico/index.md)
 
 -   ![FreeRTOS](assets/logos/freertos.svg){: style="height:48px"}
 
     ---
 
     [:octicons-arrow-right-24: FreeRTOS](platforms/freertos/index.md)
+
+-   ![Espressif](assets/logos/espressif.svg#only-light){: style="height:48px"}
+    ![Espressif](assets/logos/espressif_white.svg#only-dark){: style="height:48px"}
+
+    ---
+
+    [:octicons-arrow-right-24: ESP-IDF (ESP32)](platforms/esp-idf/index.md)
+
+-   :material-chip:{ style="font-size: 48px" }
+
+    ---
+
+    [:octicons-arrow-right-24: Patmos](platforms/patmos/index.md)
 
 -   :fontawesome-brands-linux:{ style="font-size: 48px" }
 
@@ -81,7 +94,7 @@
 
 <div markdown>
 
-[Lingua Franca](https://lf-lang.org) is a polyglot coordination language for building deterministic, concurrent systems. The uLF runtime is the embedded runtime that enables LF programs to run efficiently on microcontrollers.
+[Lingua Franca](https://lf-lang.org) is a polyglot coordination language for building deterministic, concurrent systems. The micro-LF runtime is the embedded runtime that enables LF programs to run efficiently on microcontrollers.
 
 [:octicons-arrow-right-24: Learn more at lf-lang.org](https://lf-lang.org)
 
@@ -94,8 +107,6 @@
 A simple blinky reactor that toggles an LED every 500ms:
 
 ```lf
-target uC
-
 main reactor {
   timer t(0, 500 ms)
   state led_on: bool = false

@@ -1,6 +1,6 @@
 # Federated Execution
 
-**Federation** enables reactor programs to run across multiple nodes connected by a network. Each node runs a **federate**—an independent process executing part of the reactor program. The uLF runtime maintains determinism guarantees across the distributed system through careful coordination.
+**Federation** enables reactor programs to run across multiple nodes connected by a network. Each node runs a **federate**—an independent process executing part of the reactor program. The micro-LF runtime maintains determinism guarantees across the distributed system through careful coordination.
 
 ## Why Federation?
 
@@ -37,9 +37,10 @@ Network channels abstract the underlying transport:
 ```c
 typedef enum {
   NETWORK_CHANNEL_TYPE_TCP_IP,
+  NETWORK_CHANNEL_TYPE_COAP_UDP_IP,
   NETWORK_CHANNEL_TYPE_UART,
-  NETWORK_CHANNEL_TYPE_COAP_UDP,
-  // ... platform-specific
+  NETWORK_CHANNEL_TYPE_S4NOC,
+  NETWORK_CHANNEL_TYPE_BLE,
 } NetworkChannelType;
 
 struct NetworkChannel {
@@ -57,8 +58,10 @@ struct NetworkChannel {
 | Transport | Platforms | Use Case |
 |-----------|-----------|----------|
 | TCP/IP | POSIX, Zephyr, RIOT | Ethernet, WiFi |
-| UART | RIOT, Pico | Point-to-point serial |
+| UART | RIOT, Pico, Zephyr | Point-to-point serial |
 | CoAP/UDP | RIOT | IoT networks |
+| BLE | Zephyr | Bluetooth Low Energy between two boards |
+| S4NoC | Patmos | Network-on-chip |
 | Custom | Any | Specialized hardware |
 
 ### Channel Modes
@@ -357,7 +360,7 @@ into the federation. But also other patterns could be realized with this mechani
 
 ## Clock Synchronization
 
-Physical clocks on different nodes, especially microcontrollers, drift and are not synchronized. The uLF runtime can synchronize them.
+Physical clocks on different nodes, especially microcontrollers, drift and are not synchronized. The micro-LF runtime can synchronize them.
 
 ```c
 struct ClockSyncService {
@@ -453,6 +456,7 @@ Available interface types:
 | `@interface_uart` | Serial communication |
 | `@interface_coap` | CoAP/UDP for IoT networks |
 | `@interface_s4noc` | Network-on-chip for Patmos |
+| `@interface_ble` | Bluetooth Low Energy (Zephyr) |
 | `@interface_custom` | User-defined protocols |
 
 ### @link Annotation

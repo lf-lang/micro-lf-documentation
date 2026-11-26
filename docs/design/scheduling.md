@@ -1,6 +1,6 @@
 # Scheduling and Execution
 
-This page explains how the uLF runtime scheduler executes reactor programs, managing events and ensuring reactions execute in the correct order.
+This page explains how the micro-LF runtime scheduler executes reactor programs, managing events and ensuring reactions execute in the correct order.
 
 ## The Execution Loop
 

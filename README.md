@@ -59,4 +59,4 @@ site/        # Generated static site output (not committed)
 
 ## Contributing
 
-Edit the Markdown files under `docs/` and use `mkdocs serve` to preview changes locally before submitting a pull request. The upstream repository is [lf-lang/reactor-uc](https://github.com/lf-lang/reactor-uc).
+Edit the Markdown files under `docs/` and use `mkdocs serve` to preview changes locally before submitting a pull request to [lf-lang/micro-lf-documentation](https://github.com/lf-lang/micro-lf-documentation). The micro-LF runtime and compiler live in [lf-lang/reactor-uc](https://github.com/lf-lang/reactor-uc).

@@ -1,82 +1,67 @@
 # Patmos
 
-- **Template**: [lf-patmos-template](https://github.com/lf-lang/lf-patmos-template)
-- **Patmos Project**: [patmos-project](https://github.com/t-crest/patmos)
+- **Template**: [ulf-patmos-template](https://github.com/lf-lang/ulf-patmos-template)
+- **Patmos Documentation**: [github.com/t-crest/patmos](https://github.com/t-crest/patmos)
+- **Supported Hardware**: the Patmos processor, in the `pasim` simulator or on an FPGA
 
-Patmos is a time-predictable processor designed for hard real-time systems and WCET (Worst-Case Execution Time) analysis. The uLF runtime supports single-threaded static scheduling on Patmos.
+Patmos is a time-predictable processor designed for hard real-time systems and worst-case execution time (WCET) analysis. The Patmos template builds micro-LF applications with `make` and the Patmos compiler.
 
 ## Prerequisites
 
-- Patmos toolchain (patmos-clang compiler)
-- Pasim simulator
-- Platin WCET analysis tool
+In addition to the [common prerequisites](../index.md#common-prerequisites):
+
+- **Patmos toolchain** (`patmos-clang` and the `pasim` simulator): follow the instructions at [github.com/t-crest/patmos](https://github.com/t-crest/patmos)
 
 ## Setup
 
-Clone the required repositories:
+Clone the template:
 
 ```bash
-# Clone the Patmos template
-git clone https://github.com/lf-lang/lf-patmos-template.git
-
-# Clone Lingua Franca and checkout the static schedule branch
-git clone https://github.com/lf-lang/lingua-franca.git
-cd lingua-franca
-git checkout static-schedule-single-thread
-git submodule update --init core/src/main/resources/lib/c/reactor-c
-cd ..
+git clone https://github.com/lf-lang/ulf-patmos-template.git my-project
+cd my-project
 ```
 
-Copy support files:
+## Building
 
 ```bash
-cp -r lf-patmos-template/patmos lingua-franca/test/C/src/static/patmos
-cp lf-patmos-template/Makefile lingua-franca/test/C/Makefile
-cp lf-patmos-template/ADASModel.lf lingua-franca/test/C/src/static/ADASModel.lf
-cp lf-patmos-template/SimpleConnection.lf lingua-franca/test/C/src/static/SimpleConnection.lf
+make all
 ```
 
-## Building and Running
+This builds the default application, `Smoke`, into the executable `Smoke`.
 
-Navigate to the test directory:
+## Running
+
+Run the program in the Patmos simulator:
 
 ```bash
-cd lingua-franca/test/C
+pasim Smoke
 ```
 
-Build and simulate:
+To run on an FPGA, see the [Patmos documentation](https://github.com/t-crest/patmos).
+
+## Changing the Application
+
+Set `LF_MAIN` in the `Makefile`, or on the command line:
 
 ```bash
-make APP=SingleConnection
+make LF_MAIN=MyApp all
+pasim MyApp
 ```
 
-This will:
+## Log Level
 
-1. Generate C code using `lfc`
-2. Compile with the Patmos compiler
-3. Simulate with Pasim
-4. Analyze with Platin
+The template's `Makefile` does not set a log level. To change it, add e.g. `-DLF_LOG_LEVEL_ALL=LF_LOG_LEVEL_DEBUG` to the `patmos-clang` command in the `Makefile`.
 
-## WCET Analysis
-
-Analyze a specific function:
+## Cleaning
 
 ```bash
-make APP=SingleConnection FUNC=_sinkreaction_function_0 wcet
+rm -rf src-gen Smoke
 ```
 
-## Make Targets
+## Network Channels
 
-| Target | Description |
-|--------|-------------|
-| `gen` | Generate C code using lfc |
-| `copy` | Copy support files to src-gen |
-| `comp` | Compile with Patmos compiler |
-| `sim` | Simulate with Pasim |
-| `wcet` | Analyze WCET with Platin |
-| `clean` | Delete compiled files |
-| `del` | Delete all generated code |
+| Channel | Description |
+|---------|-------------|
+| S4NoC | Network-on-chip between Patmos cores (`@interface_s4noc`) |
 
-## Static Scheduling
-
-Patmos uses the uLF runtime's **static scheduler** for predictable execution timing. The schedule is computed at compile time, enabling precise WCET analysis.
+## Notes

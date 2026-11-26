@@ -2,13 +2,15 @@ site_name: micro-LF
 site_url: https://micro-lf.org
 repo_url: https://github.com/lf-lang/reactor-uc
 repo_name: lf-lang/reactor-uc
-edit_uri: edit/main/docs/docs/
+edit_uri: https://github.com/lf-lang/micro-lf-documentation/edit/main/docs/
 
 docs_dir: docs
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started/index.md
+  - Getting Started:
+    - getting-started/index.md
+    - Windows (WSL): getting-started/wsl.md
   - Philosophy:
     - design/index.md
     - The Reactor Model: design/reactor-model.md
@@ -18,11 +20,12 @@ nav:
     - Platform Abstraction: design/platform.md
     - Code Generation: design/building.md
     - Federated Execution: design/federated.md
-    - uLF vs reactor-c: design/reactor-c-comparison.md
+    - micro-LF vs reactor-c: design/reactor-c-comparison.md
   - Documentation:
     - Annotations: documentation/annotations.md
     - Reaction API: documentation/reaction_api.md
     - Compile Flags: documentation/compile-flags.md
+    - Packages: documentation/packages.md
   - Examples:
     - Redundant Picos: projects/redundant-picos.md
     - Adafruit Feather Tutorial: projects/adafruit-feather-tutorial.md
@@ -103,7 +106,7 @@ extra:
       link: https://github.com/lf-lang/reactor-uc
 
 copyright: >
-  Copyright &copy; 2024 - 2025 micro-LF Contributors
+  Copyright &copy; 2024 - 2026 micro-LF Contributors.
 
 plugins:
   - privacy

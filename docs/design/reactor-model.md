@@ -66,7 +66,7 @@ Level 2:  [Reaction E]
 
 ## Triggers
 
-**Triggers** are event sources that cause reactions to execute. The uLF runtime supports several trigger types:
+**Triggers** are event sources that cause reactions to execute. The micro-LF runtime supports several trigger types:
 
 ### Timers
 

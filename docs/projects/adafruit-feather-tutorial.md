@@ -1,74 +1,105 @@
-# micro-lf Adafruit Feather Tutorial
+# micro-LF Adafruit Feather Tutorial
 
-A hands-on tutorial for writing federated reactor programs on the Adafruit Feather Sense using the reactor-uc runtime and RIOT OS.
+A hands-on tutorial for writing reactor programs, and finally a federated program, on the Adafruit Feather Sense using micro-LF and RIOT OS.
 
 ## What you will learn
 
 - Set up and build for the **Adafruit Feather Sense** (nRF52840-based board)
-- Configure the **reactor-uc runtime** for a bare-metal RIOT OS target
-- Read sensor data from the on-board **LSM6DS33 accelerometer**
-- Write a **federated LF program** where two nodes communicate over **BLE**
+- Write and compose reactors, and build and flash them with RIOT's `make`
+- Read the on-board **LSM6DS33** accelerometer and gyroscope over I2C
+- Use [annotations](../documentation/annotations.md) such as `@timeout`, `@max_pending_events` and `@buffer`
+- Write a **federated program** where two boards communicate over **CoAP** (IPv6 over IEEE 802.15.4)
 
 ## Setup
 
-The tutorial uses RIOT OS as the underlying RTOS. reactor-uc is integrated as a RIOT module, so the standard RIOT build system (`make`) handles compilation and flashing.
+The tutorial uses RIOT OS as the underlying RTOS. The micro-LF runtime is integrated as a RIOT module, so the standard RIOT build system (`make`) handles compilation and flashing. Set up micro-LF as described in [Getting Started](../getting-started/index.md#1-set-up-micro-lf), then clone the tutorial and its RIOT submodule:
 
 ```bash
-git clone https://github.com/lf-lang/micro-lf-tutorial
+git clone --recurse-submodules https://github.com/lf-lang/micro-lf-tutorial
 cd micro-lf-tutorial
 ```
 
+The repository's README walks through each part step by step. The exercises are in `src/` and the solutions in `reference/`. The exercises are designed to be completed in order, but you can also jump to any part.
+
 ## Runtime Configuration
 
-The target block configures the reactor-uc runtime for the Feather Sense:
+micro-LF programs (`.ulf` files) have no `target` block. The board is selected by
+the RIOT build in the tutorial's `Makefile`:
+
+```makefile
+BOARD ?= adafruit-feather-nrf52840-sense
+```
+
+Runtime options are set with [annotations](../documentation/annotations.md) on the
+main or federated reactor, for example:
 
 ```lf
-target uC {
-    platform: nrf52840,
-    scheduler: STATIC,
-    logging: WARN
+@logging("WARN")
+federated reactor {
+    ...
 }
 ```
 
-RIOT OS provides the hardware abstraction for timers, BLE, and GPIO. No RTI process is needed — federates negotiate connections directly over BLE advertisement and GATT.
+Build, flash and open a serial terminal with:
 
-## Reading the Accelerometer
+```bash
+make LF_MAIN=HelloUc all flash term
+```
 
-A dedicated reactor wraps the LSM6DS33 driver and emits acceleration vectors on a periodic timer:
+## Reading the Sensor
+
+The `LSM6DS33` reactor talks to the sensor over I2C with RIOT's `periph_i2c` driver. At startup it configures the sensor, which is then read by a periodic timer. The reactor outputs the orientation as a `Vector` (x, y, z):
 
 ```lf
-reactor Accelerometer(rate: interval_t = 100msec) {
-    output acc: AccelerationVec;
-    timer t(0, rate);
+reactor LSM6DS33 {
+  output orientation: Vector
+  timer t(50msec, 150msec)
 
-    reaction(t) -> acc {=
-        AccelerationVec v;
-        lsm6ds33_read_acc(&dev, &v.x, &v.y, &v.z);
-        lf_set(acc, v);
-    =}
+  reaction(startup) {=
+    // Find the sensor on the I2C bus (WHO_AM_I), reset it, and configure
+    // the accelerometer and gyroscope.
+  =}
+
+  reaction(t) -> orientation {=
+    // Read the gyroscope registers, integrate the angles and
+    // lf_set() the new orientation.
+  =}
 }
 ```
 
-## Federated Program over BLE
+I2C support has to be compiled into RIOT by adding these modules to the `Makefile`:
 
-Two Feather Sense boards run as separate federates. One reads the accelerometer and streams data; the other receives and drives the on-board LED based on the magnitude.
+```makefile
+USEMODULE += periph_i2c
+USEMODULE += printf_float
+USEMODULE += ztimer_sec
+```
+
+## Federated Program over CoAP
+
+Two Feather Sense boards run as separate federates and communicate over CoAP, using their IPv6 link-local addresses (the tutorial's `Ipv6LinkLocal.ulf` program prints a board's address). In the final exercise, one board reads its orientation and the other blinks its LED faster when the first board is turned:
 
 ```lf
 federated reactor {
-    @interface_ble(name="ble0", role="peripheral", mtu=64)
-    @clock_sync(grandmaster=true, period=1000000000)
-    sensor_node = new SensorNode();
+  @interface_coap(name="if1", address="fe80::e46b:69f7:d00d:2a31")
+  sensor = new SensorReactor()
 
-    @interface_ble(name="ble0", role="central", peer="sensor_node")
-    @clock_sync(grandmaster=false, period=1000000000)
-    display_node = new DisplayNode();
+  @interface_coap(name="if1", address="fe80::6481:c8fa:8443:8e02")
+  blinking = new BlinkingReactor()
 
-    @link(left="ble0", right="ble0")
-    sensor_node.acc_out -> display_node.acc_in after 10msec;
+  @link(left="if1", right="if1")
+  sensor.orientation -> blinking.orientation after 10ms;
 }
 ```
 
-The `@interface_ble` annotation configures the BLE transport. The central node scans for the peripheral by name and establishes the GATT channel before execution begins. `after 10msec` adds a logical delay to account for BLE connection latency.
+Each `@interface_coap` annotation declares a CoAP interface with the address of the board that runs that federate, and `@link` selects the interfaces that carry the connection. `after 10ms` adds a logical delay that covers the network latency. Replace the addresses with those of your boards.
+
+Build and flash each federate onto its own board with `LF_FED`:
+
+```bash
+make LF_MAIN=FederatedBlinking LF_FED=sensor all flash term
+make LF_MAIN=FederatedBlinking LF_FED=blinking all flash term
+```
 
 ## Repository
 
