@@ -2,17 +2,26 @@
 
 - **Template**: [ulf-freertos-template](https://github.com/lf-lang/ulf-freertos-template)
 - **FreeRTOS Documentation**: [freertos.org](https://www.freertos.org/Documentation/02-Kernel/07-Books-and-manual/01-RTOS_book)
-- **Supported Devices**: [FreeRTOS Supported Devices](https://www.freertos.org/Documentation/02-Kernel/03-Supported-devices/00-Supported-devices)
+- **Supported Boards**: Raspberry Pi Pico (RP2040)
 
-## Supported Platforms
+The FreeRTOS template runs micro-LF applications on the FreeRTOS kernel. Its hardware support is organized per platform; it currently supports the Raspberry Pi Pico (RP2040).
 
-The FreeRTOS template currently supports:
+## Prerequisites
 
-- **Pico (RP2040/RP2350)** - Raspberry Pi Pico and Pico 2
+In addition to the [common prerequisites](../index.md#common-prerequisites):
+
+- **CMake 3.20+**
+- **ARM cross-compiler**: [Install ARM Cross-Compiler](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-cmake-standard-c-library-arm-cross-compiler)
+- **picotool**: [Install Picotool](https://www.lf-lang.org/embedded-lab/Non-Nix.html#install-picotool)
+- **Pico SDK**: the template does not include it, so point `PICO_SDK_PATH` to a [pico-sdk](https://github.com/raspberrypi/pico-sdk) checkout:
+
+```bash
+export PICO_SDK_PATH=/path/to/pico-sdk
+```
 
 ## Setup
 
-Clone and initialize submodules:
+Clone the template and initialize the FreeRTOS submodule:
 
 ```bash
 git clone https://github.com/lf-lang/ulf-freertos-template.git my-project
@@ -20,58 +29,55 @@ cd my-project
 git submodule update --init --recursive
 ```
 
-Install the ARM toolchain as described in the [Pico platform](../pico/index.md) prerequisites.
-
 ## Building
 
-```bash
-mkdir build && cd build
-cmake -DPLATFORM_TARGET=pico ..
-make
-```
-
-## Flashing (Pico)
-
-Put the Pico into BOOTSEL mode, then:
+Select the hardware platform with `PLATFORM_TARGET` (required):
 
 ```bash
-picotool load -x bin/Blink.elf
+cmake -Bbuild -DPLATFORM_TARGET=pico
+cmake --build build
 ```
 
-## Project Structure
+This builds the default application, `HelloFreeRTOS`, into `build/HelloFreeRTOS.elf`. For a Pico W, also pass `-DPICO_BOARD=pico_w`.
 
-```
-ulf-freertos-template/
-├── CMakeLists.txt
-├── platforms/
-│   └── pico/
-│       ├── FreeRTOSConfig.h
-│       ├── platform.cmake
-│       └── README.md
-├── src/
-│   ├── Blink.lf
-│   ├── HelloFreeRTOS.lf
-│   └── Timer.lf
-└── FreeRTOS/                # Submodule
+## Flashing
+
+Put the Pico into BOOTSEL mode (hold the BOOTSEL button while connecting USB), then:
+
+```bash
+picotool load -x build/HelloFreeRTOS.elf
 ```
 
-## Platform Configuration
+The program's output is sent over USB serial and over UART (GPIO 0 and 1). On Windows, first attach the board to WSL: see [Windows (WSL)](../../getting-started/wsl.md).
 
-Each platform has its own `FreeRTOSConfig.h` for tuning:
+## Changing the Application
 
-- **CPU clock**: 133 MHz (Pico default)
-- **Tick rate**: 100 Hz
-- **Heap size**: 128 KB
+Set `LF_MAIN` in `CMakeLists.txt`, or on the command line:
 
-## Adding New Platforms
+```bash
+cmake -Bbuild -DPLATFORM_TARGET=pico -DLF_MAIN=Blink
+cmake --build build
+```
 
-1. Create `platforms/<platform-name>/`
-2. Add `platform.cmake` with platform-specific CMake configuration
-3. Add `FreeRTOSConfig.h` tuned for your hardware
-4. Optionally add FreeRTOS hooks in `<platform>_freertos_hooks.c`
+## Log Level
 
-## Pico-Specific Features
+The default is `LF_LOG_LEVEL_WARN`:
 
-- USB and UART stdio enabled by default
-- Pico W WiFi libraries automatically linked
-- Connect GPIO 0 (TX) and GPIO 1 (RX) for UART output
+```bash
+cmake -Bbuild -DPLATFORM_TARGET=pico -DLOG_LEVEL=LF_LOG_LEVEL_DEBUG
+```
+
+## Cleaning
+
+```bash
+rm -rf src-gen build
+```
+
+## Network Channels
+
+No network channels are available on FreeRTOS yet, so federated programs are not supported on this platform.
+
+## Notes
+
+- **Timer precision**: the Pico's `FreeRTOSConfig.h` sets a 100 Hz tick, so timers are precise to 10 ms. Increase `configTICK_RATE_HZ` for finer timing.
+- **Other hardware**: each platform lives in `platforms/<name>/` with its own `platform.cmake` and `FreeRTOSConfig.h`; see the template's README to add one.
