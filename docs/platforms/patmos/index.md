@@ -65,5 +65,3 @@ rm -rf src-gen Smoke
 | S4NoC | Network-on-chip between Patmos cores (`@interface_s4noc`) |
 
 ## Notes
-
-- The older [lf-patmos-template](https://github.com/lf-lang/lf-patmos-template) targets the Lingua Franca C target (reactor-c), not micro-LF. It uses a static scheduler and includes WCET analysis with Platin.
