@@ -1,12 +1,12 @@
 # Redundant Picos
 
-A fault-tolerant flight controller using federated uLF runtime execution across multiple Raspberry Pi Pico boards connected by UART.
+A fault-tolerant flight controller using federated micro-LF runtime execution across multiple Raspberry Pi Pico boards connected by UART.
 
 ![Redundant Pico Setup](../assets/images/projects/redundant-pico.JPG)
 
 ## Overview
 
-This project demonstrates **hardware redundancy** and **automatic leader election** using the uLF runtime's peer-to-peer federated execution on Raspberry Pi Pico microcontrollers. Multiple Pico boards form a ring network over UART and independently agree on which node is the current leader. The leader aggregates sensor readings from all nodes and drives the actuators; if it crashes, the remaining nodes elect a new leader without any external coordinator.
+This project demonstrates **hardware redundancy** and **automatic leader election** using the micro-LF runtime's peer-to-peer federated execution on Raspberry Pi Pico microcontrollers. Multiple Pico boards form a ring network over UART and independently agree on which node is the current leader. The leader aggregates sensor readings from all nodes and drives the actuators; if it crashes, the remaining nodes elect a new leader without any external coordinator.
 
 The project was presented at the [Flight Software Workshop 2025](https://flightsoftware.org/workshop/FSW2025).
 
@@ -238,7 +238,7 @@ federated reactor {
 }
 ```
 
-Notable uLF runtime features in use:
+Notable micro-LF runtime features in use:
 
 - **`@interface_uart`** — defines a UART transport; no central RTI is needed
 - **`@link`** — binds an LF connection to a named interface, multiplexing control and data over the same physical UART

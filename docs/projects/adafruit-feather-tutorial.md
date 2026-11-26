@@ -12,7 +12,7 @@ A hands-on tutorial for writing reactor programs, and finally a federated progra
 
 ## Setup
 
-The tutorial uses RIOT OS as the underlying RTOS. The micro-LF runtime is integrated as a RIOT module, so the standard RIOT build system (`make`) handles compilation and flashing. Set up micro-LF as described in [Getting Started](../getting-started/index.md#1-clone-micro-lf), then clone the tutorial and its RIOT submodule:
+The tutorial uses RIOT OS as the underlying RTOS. The micro-LF runtime is integrated as a RIOT module, so the standard RIOT build system (`make`) handles compilation and flashing. Set up micro-LF as described in [Getting Started](../getting-started/index.md#1-set-up-micro-lf), then clone the tutorial and its RIOT submodule:
 
 ```bash
 git clone --recurse-submodules https://github.com/lf-lang/micro-lf-tutorial
