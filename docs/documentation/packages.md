@@ -1,7 +1,7 @@
 # Packages
 
 Reusable reactors can be shared as **packages**: plain directories, typically git
-clones of a library repository, that `ulfc` finds by name. Import from a package
+clones of a library repository, that the micro-LF compiler finds by name. Import from a package
 with angle brackets instead of a relative path:
 
 ```lf
@@ -37,7 +37,7 @@ directory.
 
 ## Where Packages Are Found
 
-`ulfc` determines the project root as the parent of the `src` directory that
+The compiler determines the project root as the parent of the `src` directory that
 contains the importing file, and looks for the package directory in this order:
 
 1. `<project root>/build/lfc_include/<package>`

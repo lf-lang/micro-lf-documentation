@@ -1,21 +1,21 @@
 # Code Generation and Compilation
 
-The design of systems with micro-LF and Lingua Franca (LF) follows a top-down approach, where the programmer starts with a design written in the LF language. The micro-LF compiler (`ulfc`) translates this design into C code that uses the uLF runtime library for execution. This generated code is platform-agnostic and can be compiled for various embedded and resource-constrained systems.
+The design of systems with micro-LF and Lingua Franca (LF) follows a top-down approach, where the programmer starts with a design written in the LF language. The micro-LF compiler (`ulfc`, run with the `ulf/bin/ulfc-dev` script, see [Getting Started](../getting-started/index.md#1-set-up-micro-lf)) translates this design into C code that uses the micro-LF runtime library for execution. This generated code is platform-agnostic and can be compiled for various embedded and resource-constrained systems.
 
 ## Code Generation Process
 
-The micro-LF compiler (`ulfc`) is the code generator that transforms micro-LF source files (`.ulf`) into C code. `ulfc` analyzes the reactor model, performs optimizations, and generates:
+The micro-LF compiler is the code generator that transforms micro-LF source files (`.ulf`) into C code. It analyzes the reactor model, performs optimizations, and generates:
 
 - Reactor definitions and connections
 - Event scheduling logic
 - Platform-specific initialization code
 - Network communication code for federated systems
 
-For federated (distributed) programs, `ulfc` generates separate subfolders for each federate, containing the necessary code and build files for that node.
+For federated (distributed) programs, the compiler generates separate subfolders for each federate, containing the necessary code and build files for that node.
 
-## uLF Runtime Library
+## micro-LF Runtime Library
 
-The uLF runtime is technically a runtime library written in C, providing the core execution engine for the reactor model. It implements:
+The micro-LF runtime is technically a runtime library written in C, providing the core execution engine for the reactor model. It implements:
 
 - Event-driven scheduling
 - Logical time management
@@ -31,22 +31,22 @@ The library is highly configurable through compile-time flags, allowing it to be
 
 ## Build System Integration
 
-The uLF runtime enables seamless integration into existing toolchains. The generated code includes importable build files (CMake or Makefiles) that can be incorporated into your project's build system.
+The micro-LF runtime enables seamless integration into existing toolchains. The generated code includes importable build files (CMake or Makefiles) that can be incorporated into your project's build system.
 
 ### Zephyr Integration
 
-For Zephyr-based projects, `ulfc` provides integration through a custom west command. The build process follows the standard Zephyr workflow:
+For Zephyr-based projects, the compiler is integrated through a custom west command. The build process follows the standard Zephyr workflow:
 
-1. west calls `ulfc` to generate C code from `.ulf` sources
-2. Generated code is compiled alongside the uLF runtime library
+1. west calls the micro-LF compiler to generate C code from `.ulf` sources
+2. Generated code is compiled alongside the micro-LF runtime library
 3. west uses CMake to configure and build the final executable
 
 ### RIOT OS Integration
 
-For RIOT OS projects with Make-based toolchains, `ulfc` is integrated into the application Makefile:
+For RIOT OS projects with Make-based toolchains, the compiler is integrated into the application Makefile:
 
-1. `make all` first invokes `ulfc` on `.ulf` sources
-2. Generated sources are compiled with the uLF runtime library
+1. `make all` first invokes the micro-LF compiler on `.ulf` sources
+2. Generated sources are compiled with the micro-LF runtime library
 3. Standard RIOT build process produces the binary
 
 ### Other Platforms
@@ -55,9 +55,9 @@ For common platforms like Raspberry Pi Pico (pico-sdk), we provide build templat
 
 ``` mermaid
 graph LR
-  A[.ulf Source Files] --> B[ulfc Code Generator];
+  A[.ulf Source Files] --> B[micro-LF Compiler];
   B -->|Generates C Code| C[Platform-Specific Code];
-  D[uLF Runtime Library] --> E[Configured with Compile Flags];
+  D[micro-LF Runtime Library] --> E[Configured with Compile Flags];
   C --> F[Build System];
   E --> F;
   F --> G[Cross Compiler];
